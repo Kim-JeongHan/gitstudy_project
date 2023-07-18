@@ -36,3 +36,10 @@ odometry 계산코드를 작성해세요.
 ## 남윤재
 MDP관련 내용이 담겨져있는 코드를 찾아 추가하세요
 파일이름은 reinforcement_mdp
+
+## 배승학
+쿼터니언을 받아 오일러로 변환하는 함수와 오일러를 받아 쿼터니언으로 변환하는 함수를 class로 구성하세요.
+C++코드, python 코드를 각각 구성하세요.
+파일 이름은 transform_cpp, transform_python
+directory이름은  transform
+
