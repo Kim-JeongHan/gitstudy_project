@@ -1,0 +1,10 @@
+# PID CODE
+
+## 파라미터 >>
+## ```PID( double dt, double max, double min, double Kp, double Kd, double Ki )```
+
+dt는 시간 변화량  
+max, min은 pid제어에 의한 output 상한, 하한 값  
+kp는 비례제어 게인 값  
+kd는 미준제어 게인 값  
+ki는 적분제어 게인 값   
