@@ -8,9 +8,14 @@
 PID제어 코드를 찾아 추가하세요
 파일이름은 motor_control
 
-## 원두연
-PID제어 코드를 찾아 추가하세요
-파일이름은 motor_control2
+## motor_control2
+
+This code defines a PID controller class using C++ programming language. 
+You can use this code for motor control, as PID controllers are widely used in control systems
+
+If you courios about motor_control2, click [motor_control2](https://github.com/Kim-JeongHan/gitstudy_project/tree/master/motor_control2)
+
+Author : [dy0221](https://github.com/dy0221)
 
 ## ros_topic_example
 
