@@ -1,0 +1,31 @@
+void drive(const int x, const int y, const int phi )
+{
+    rec::core_lt::Timer timer;
+    timer.start();
+
+    //while( com.isConnected()
+    //	&& false == bumper.value()
+    //	&& timer.msecsElapsed() < 10000 )
+    while( com.isConnected()
+            && false == bumper.value()
+            && odometry.x() < x )
+    {
+        omniDrive.setVelocity( 70, 0, 0 );
+        com.waitForUpdate();
+    }
+    while( com.isConnected()
+            && false == bumper.value()
+            && odometry.y() < y )
+    {
+        omniDrive.setVelocity( 0, 70, 0 );
+        com.waitForUpdate();
+    }
+    while( com.isConnected()
+            && false == bumper.value()
+            && odometry.phi() < phi )
+    {
+        omniDrive.setVelocity( 0, 0, 30 );
+        com.waitForUpdate();
+    }
+
+}
