@@ -4,9 +4,14 @@
 인터넷에서 삼중 for문 예시를 찾아서 추가해 넣으세요
 파일이름은 three_for
 
-## 김지혁
-PID제어 코드를 찾아 추가하세요
-파일이름은 motor_control
+## motor_control
+
+We have two type PID control code.
+You can choose to use it in any way that suits your taste.
+
+If you courios about motor_control2, click [motor_control](https://github.com/Kim-JeongHan/gitstudy_project/tree/master/motor_control)
+
+Author : [KKIMJIHYEOK](https://github.com/KKIMJIHYEOK)
 
 ## motor_control2
 
