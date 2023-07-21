@@ -1,0 +1,147 @@
+#define btn 7
+
+// Serial Receiver Parameter
+bool rcv_status = 0;
+bool rcv_ready = 0;
+byte rcv_data = 0;
+byte rcv_checksum = 0;
+byte rx_buffer[7];
+byte rx_data[7];
+int rcv_count = 0;
+int rcv_index = 0;
+
+// Motor Degree Parameter
+int m1_angle = 0;
+int m2_angle = 0;
+bool m1_sign = 0;
+bool m2_sign = 0;
+
+// Serial Transmit Parameter
+byte tx_data[9];
+byte checksum = 0;
+
+// Odometry Parameter
+float L = 17.0;
+float Wheel_R = 3.2;
+
+bool pressed_1 = 0, pressed_2 = 0;
+
+
+
+void setup() {
+  Serial.begin(115200);
+  Serial1.begin(115200);
+  tx_data[0] = 0xFF;
+  tx_data[1] = 0xFF;
+}
+
+void loop() {
+
+  pinMode(btn, INPUT_PULLUP);
+  
+//  Serial.print(m1_sign);
+//  Serial.print(" ");
+//  Serial.print(m1_angle);
+//  Serial.print("   ");
+//  Serial.print(m2_sign);
+//  Serial.print(" ");
+//  Serial.println(m2_angle);
+
+  memcpy((char*)&m1_angle, (char*)rx_data, 2);
+  memcpy((char*)&m2_angle, (char*)&rx_data[2], 2);
+  
+  if(rx_data[4] == 0x00)  m1_sign = true;   // CW
+  else                    m1_sign = false;  // CCW
+  if(rx_data[5] == 0x00)  m2_sign = true;   // CW
+  else                    m2_sign = false;  // CCW
+
+  if(m1_sign) m1_angle = m1_angle * (-1);
+  if(m2_sign) m2_angle = m2_angle * (-1);
+
+  float theta_1 = m1_angle * PI / 180;
+  float theta_2 = m2_angle * PI / 180;
+
+  float S_R = Wheel_R * theta_1;
+  float S_L = Wheel_R * theta_2;
+
+  float theta = (S_R - S_L) / L * 180 / PI;
+  float S = (S_R + S_L) / 2;
+
+  // Your Code Here ------------------------------------
+
+  
+
+  // ----------------------------------------------------
+}
+
+
+// Motor Spd Serial Packet Transmit
+
+void sendMotor(int m1Spd, int m2Spd) {
+  checksum=0;
+  if(m1Spd<0){
+    tx_data[2] = 0x00; //ccw  
+    m1Spd *= -1;
+  }
+  else tx_data[2] = 0x01; //cw
+  if(m1Spd>255) m1Spd=255;
+  tx_data[3] = m1Spd;
+  
+  if(m2Spd<0){
+    tx_data[4] = 0x00; //ccw
+    m2Spd *= -1;
+  }
+  else tx_data[4] = 0x01; //cw
+  if(m2Spd>255) m2Spd=255;
+  tx_data[5] = m2Spd;
+  
+  for(int i=2; i<6;i++) checksum ^= tx_data[i];
+  checksum += 1;
+  tx_data[6]=checksum;
+  Serial1.write(tx_data,7);
+}
+
+// Encoder Data Serial Receive
+void serialEvent1() {
+  rcv_data = Serial1.read();
+    switch(rcv_count){
+        case 0:
+            if((rcv_ready==0) && (rcv_data==0xFF)){
+                rcv_count = 1;
+            }
+            else
+                rcv_count = 0;
+            break;
+        case 1:
+            if((rcv_ready==0) && (rcv_data==0xFF)){
+                rcv_count = 2;
+                rcv_ready = 1;
+            }
+            else
+                rcv_count = 0;
+            break;
+        case 2:
+            rx_buffer[rcv_index] = rcv_data;
+            rcv_index++;
+            if(rcv_index > 6){
+                rcv_checksum = 0;
+                for(int i=0; i<6; i++){
+                    rcv_checksum ^= rx_buffer[i];
+                }
+                rcv_checksum += 1;
+                if(rcv_checksum == rx_buffer[rcv_index-1]){
+                    rcv_status = 1;
+                    memcpy((char*)rx_data, (char*)rx_buffer, 7);
+                }
+                rcv_count = 0;
+                rcv_index = 0;
+                rcv_ready = 0;
+            }
+            break;
+        default:
+            rcv_count = 0;
+            rcv_index = 0;
+            rcv_ready = 0;
+            break;
+    }
+}
